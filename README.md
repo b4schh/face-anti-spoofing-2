@@ -44,7 +44,9 @@ Mô hình đề xuất bao gồm các thành phần chính sau:
 - Nhánh phân loại liveness
 - Các chiến lược học đối kháng và học tương phản
 
-![Sơ đồ kiến trúc SSAN](images/ssan_architecture.png)
+<p align="center">
+  <img src="images/ssan_architecture.png" alt="Sơ đồ kiến trúc SSAN" width="600">
+</p>
 
 *Hình 1. Sơ đồ tổng thể kiến trúc mô hình SSAN-based cho Face Anti-Spoofing.*
 
