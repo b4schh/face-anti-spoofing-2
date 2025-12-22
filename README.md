@@ -45,7 +45,7 @@ Mô hình đề xuất bao gồm các thành phần chính sau:
 - Các chiến lược học đối kháng và học tương phản
 
 <div align="center">
-  <img src="images/ssan_architecture.png" width="650"/>
+  <img src="images/ssan_architecture.png" width="800"/>
   <p><em>Hình 1. Sơ đồ tổng thể kiến trúc mô hình SSAN-based cho Face Anti-Spoofing.</em></p>
 </div>
 
@@ -90,19 +90,19 @@ Với một mini-batch gồm N mẫu, mỗi mẫu \( x_i \) được trích xu�
 
 <div align="center">
   <img src="images/self-assembly-feature.png" width="500"/>
-  <p><em>Công thức (3) – Self-assembly feature \( S(x_i; x_i) \).</em></p>
+  <p><em>Công thức (3) – Self-assembly feature.</em></p>
 </div>
 
 Đặc trưng này được gọi là self-assembly feature, đại diện cho việc tái tổ hợp style và content gốc của chính mẫu đó.
 
 Ngoài ra, để khai thác hiệu quả các đặc trưng style liên quan đến liveness, mô hình tạo ra các đặc trưng phụ trợ bằng cách xáo trộn (shuffle) các cặp content và style trong cùng mini-batch. Cụ thể, content của mẫu \( x_i \) được kết hợp với style của một mẫu ngẫu nhiên khác \( x_{i^*} \):
 
-![Biểu thức Shuffle-assembly feature](images/shuffle-assembly-feature.png)
-
-*Công thức (4) – Shuffle-assembly feature \( S(x_i; x_{i^*}) \).*
+<div align="center">
+  <img src="images/shuffle-assembly-feature.png" width="500"/>
+  <p><em>Công thức (4) – Shuffle-assembly feature.</em></p>
+</div>
 
 Các đặc trưng này được gọi là shuffle-assembly features. Việc tạo ra self-assembly và shuffle-assembly features giúp mô hình quan sát được nhiều tổ hợp content–style khác nhau, từ đó tăng tính đa dạng của không gian đặc trưng và hỗ trợ học tổng quát hóa miền.
-
 
 ---
 
@@ -116,28 +116,30 @@ Sau khi kết hợp đặc trưng content và style, mô hình tạo ra hai lo�
 
 Đặc trưng self-assembly được đưa trực tiếp vào bộ phân loại và được giám sát bằng hàm mất mát phân loại nhị phân L_cls. Trong khi đó, các đặc trưng shuffle-assembly được so sánh với đặc trưng self-assembly tương ứng bằng độ đo cosine similarity.
 
-![Công thức độ tương đồng cosine giữa hai vector đặc trưng](images/sim.png)
-
-*Công thức (1) – Độ tương đồng cosine giữa hai vector đặc trưng.*
+<div align="center">
+  <img src="images/sim.png" width="500"/>
+  <p><em>Công thức (5) – Độ tương đồng cosine giữa hai vector đặc trưng.</em></p>
+</div>
 
 Cosine similarity được sử dụng để đo mức độ giống nhau giữa hai vector đặc trưng đã được chuẩn hóa L2, và có thể được xem là tương đương với sai số bình phương trung bình giữa các vector đã chuẩn hóa.
 
 Trong không gian đặc trưng style, các đặc trưng self-assembly được xem như các anchor. Một phép toán stop-gradient được áp dụng lên các anchor này nhằm cố định vị trí của chúng trong quá trình huấn luyện. Các đặc trưng shuffle-assembly sau đó được kéo lại gần hoặc đẩy ra xa khỏi anchor tương ứng, tùy thuộc vào việc chúng có cùng nhãn liveness hay không.
 
-![Minh họa cơ chế contrastive learning](images/contrastive_learning.png)
-
-*Hình 3. Minh họa cơ chế contrastive learning cho đặc trưng style, trong đó self-assembly đóng vai trò anchor và shuffle-assembly được điều chỉnh dựa trên thông tin liveness.*
+<div align="center">
+  <img src="images/contrastive_learning.png" width="600"/>
+  <p><em>Hình 2. Minh họa cơ chế contrastive learning cho đặc trưng style, trong đó self-assembly đóng vai trò anchor và shuffle-assembly được điều chỉnh dựa trên thông tin liveness.</em></p>
+</div>
 
 Cụ thể, nếu hai mẫu có cùng nhãn liveness, các đặc trưng shuffle-assembly sẽ được kéo gần anchor; ngược lại, nếu khác nhãn, chúng sẽ bị đẩy ra xa. Trong quá trình này, gradient chỉ được lan truyền qua các đặc trưng shuffle-assembly, giúp tập trung học các thông tin style liên quan đến liveness.
 
 Hàm mất mát học tương phản được xây dựng dựa trên mức độ tương đồng cosine và tính nhất quán của nhãn liveness giữa hai mẫu.
 
-![Hàm mất mát contrastive](images/loss_contrastive.png)
-
-*Công thức (2) – Hàm mất mát contrastive cho đặc trưng style.*
+<div align="center">
+  <img src="images/loss_contrastive.png" width="500"/>
+  <p><em>Công thức (6) – Hàm mất mát học tương phản (contrastive loss) cho đặc trưng style.</em></p>
+</div>
 
 Thông qua cơ chế học tương phản này, mô hình có thể làm nổi bật các đặc trưng style liên quan đến liveness trong khi hạn chế ảnh hưởng của các yếu tố phụ thuộc miền, từ đó cải thiện khả năng tổng quát hóa trong bài toán Face Anti-Spoofing.
-
 
 ---
 
@@ -153,9 +155,10 @@ Thông qua quá trình huấn luyện đối kháng, content feature trở nên 
 
 Mô hình được huấn luyện theo chiến lược đa nhiệm với tổng hàm mất mát:
 
-![Hàm mất mát tổng](images/loss_total.png)
-
-*Tổng hàm mất mát của mô hình.*
+<div align="center">
+  <img src="images/loss_total.png" width="500"/>
+  <p><em>Công thức (7) – Tổng hàm mất mát của mô hình.</em></p>
+</div>
 
 Trong đó:
 - Hàm mất mát phân loại liveness đảm bảo khả năng phân biệt live/spoof.
