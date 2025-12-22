@@ -44,11 +44,10 @@ Mô hình đề xuất bao gồm các thành phần chính sau:
 - Nhánh phân loại liveness
 - Các chiến lược học đối kháng và học tương phản
 
-<p align="center">
-  <img src="images/ssan_architecture.png" alt="Sơ đồ kiến trúc SSAN" width="600">
-</p>
-
-*Hình 1. Sơ đồ tổng thể kiến trúc mô hình SSAN-based cho Face Anti-Spoofing.*
+<div align="center">
+  <img src="images/ssan_architecture.png" width="650"/>
+  <p><em>Hình 1. Sơ đồ tổng thể kiến trúc mô hình SSAN-based cho Face Anti-Spoofing.</em></p>
+</div>
 
 Hình minh họa thể hiện pipeline tổng quát của mô hình. Kiến trúc tổng thể của mạng SSAN gồm các bước chính sau. Trước tiên, các ảnh RGB đến từ nhiều miền khác nhau được đưa vào bộ sinh đặc trưng để trích xuất các biểu diễn đặc trưng. Tiếp theo, một bộ trích xuất đặc trưng kết hợp với lớp đảo ngược gradient (GRL) được huấn luyện bằng học đối kháng nhằm làm cho đặc trưng nội dung trở nên không phân biệt giữa các miền. Song song với đó, một bộ trích xuất đặc trưng khác được sử dụng để thu thập các đặc trưng đa tỷ lệ, giúp nắm bắt thông tin phong cách từ mức độ thô đến chi tiết. Cuối cùng, nhằm tăng cường và tinh chỉnh thông tin phong cách phục vụ cho bài toán Face Anti-Spoofing, một chuỗi các lớp lắp ráp phong cách (SAL) được thiết kế để tái kết hợp linh hoạt giữa đặc trưng nội dung và đặc trưng phong cách, dưới sự hỗ trợ của chiến lược học tương phản.
 
@@ -73,23 +72,26 @@ Cách tách này giúp mô hình xử lý riêng biệt các yếu tố cần t�
 
 Adaptive Instance Normalization (AdaIN) là một phương pháp chuyển phong cách thích ứng, cho phép kết hợp một đặc trưng nội dung (content) với một đặc trưng phong cách (style) bằng cách điều chỉnh thống kê kênh của content theo style. Trong đó, các tham số scale và shift được sinh ra từ đặc trưng style.
 
-![Biển thức AdaIN](images/adain_function.png)
-
-*Công thức (1) – Biểu thức Adaptive Instance Normalization (AdaIN).*
+<div align="center">
+  <img src="images/adain_function.png" width="500"/>
+  <p><em>Công thức (1) – Biểu thức Adaptive Instance Normalization (AdaIN).</em></p>
+</div>
 
 Trong mô hình đề xuất, để kết hợp đặc trưng content \( f_c \) và đặc trưng style \( f_s \), các Style Assembly Layers (SAL) được xây dựng dựa trên AdaIN kết hợp với các lớp tích chập và kết nối dư (residual connection). Cụ thể, đặc trưng style được đưa qua phép pooling toàn cục và một mạng MLP để sinh ra các tham số affine, sau đó được sử dụng để chuẩn hóa và điều chỉnh đặc trưng content.
 
-![Biểu thức SAL](images/sal.png)
-
-*Công thức (2) – Biểu thức Style Assembly Layer (SAL).*
+<div align="center">
+  <img src="images/sal.png" width="500"/>
+  <p><em>Công thức (2) – Biểu thức Style Assembly Layer (SAL).</em></p>
+</div>
 
 Tuy nhiên, đặc trưng style không chỉ chứa thông tin liên quan đến liveness mà còn bao gồm các yếu tố phụ thuộc miền dữ liệu, có thể gây lệch miền trong quá trình huấn luyện. Để giảm ảnh hưởng của các yếu tố này và tăng cường khả năng tổng quát hóa, phương pháp Shuffled Style Assembly được đề xuất.
 
 Với một mini-batch gồm N mẫu, mỗi mẫu \( x_i \) được trích xuất thành cặp đặc trưng content \( f_c(x_i) \) và style \( f_s(x_i) \). Khi kết hợp content và style từ cùng một mẫu, ta thu được đặc trưng:
 
-![Biểu thức Self-assembly feature](images/self-assembly-feature.png)
-
-*Công thức (3) – Self-assembly feature \( S(x_i; x_i) \).*
+<div align="center">
+  <img src="images/self-assembly-feature.png" width="500"/>
+  <p><em>Công thức (3) – Self-assembly feature \( S(x_i; x_i) \).</em></p>
+</div>
 
 Đặc trưng này được gọi là self-assembly feature, đại diện cho việc tái tổ hợp style và content gốc của chính mẫu đó.
 
