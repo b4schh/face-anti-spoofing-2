@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Anti-Spoofing Demo</title>
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- MediaPipe Face Detection -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_detection"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <h1>🎭 Face Anti-Spoofing Detection</h1>
+            <p>Real-time face liveness detection using AI</p>
+        </header>
+
+        <!-- API Status -->
+        <div class="api-status" id="apiStatus">
+            <span class="status-dot" id="statusDot"></span>
+            <span id="statusText">Checking API...</span>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Video Section -->
+            <div class="video-section">
+                <div class="video-container">
+                    <video id="webcam" autoplay playsinline></video>
+                    <canvas id="canvas"></canvas>
+                    <div class="detection-overlay" id="overlay"></div>
+                </div>
+                
+                <!-- Controls -->
+                <div class="controls">
+                    <button id="startBtn" class="btn btn-primary">
+                        <span class="icon">▶</span> Start Camera
+                    </button>
+                    <button id="stopBtn" class="btn btn-danger" disabled>
+                        <span class="icon">⏹</span> Stop Camera
+                    </button>
+                </div>
+
+                <!-- Stats -->
+                <div class="stats">
+                    <div class="stat-item">
+                        <span class="stat-label">FPS:</span>
+                        <span class="stat-value" id="fps">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Faces:</span>
+                        <span class="stat-value" id="faceCount">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">API Calls:</span>
+                        <span class="stat-value" id="apiCalls">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div class="results-section">
+                <h2>Detection Results</h2>
+                
+                <!-- Current Result -->
+                <div class="result-card" id="resultCard">
+                    <div class="result-icon" id="resultIcon">
+                        <span>👤</span>
+                    </div>
+                    <div class="result-info">
+                        <div class="result-status" id="resultStatus">
+                            Waiting for detection...
+                        </div>
+                        <div class="result-confidence" id="resultConfidence"></div>
+                    </div>
+                    <div class="result-badge" id="resultBadge"></div>
+                </div>
+
+                <!-- Face Preview -->
+                <div class="face-preview">
+                    <h3>Detected Face</h3>
+                    <canvas id="faceCanvas" width="256" height="256"></canvas>
+                    <p class="preview-label" id="previewLabel">No face detected</p>
+                </div>
+
+                <!-- History -->
+                <div class="history">
+                    <h3>Detection History</h3>
+                    <div class="history-list" id="historyList">
+                        <p class="history-empty">No detections yet</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Panel -->
+        <div class="settings-panel">
+            <h3>⚙️ Settings</h3>
+            <div class="setting-item">
+                <label for="apiUrl">API URL:</label>
+                <input type="text" id="apiUrl" value="http://localhost:8000" />
+            </div>
+            <div class="setting-item">
+                <label for="sendRate">Send Rate (FPS):</label>
+                <select id="sendRate">
+                    <option value="1">1 FPS</option>
+                    <option value="2" selected>2 FPS</option>
+                    <option value="3">3 FPS</option>
+                </select>
+            </div>
+            <div class="setting-item">
+                <label for="confidence">Min Confidence:</label>
+                <input type="range" id="confidence" min="0" max="1" step="0.1" value="0.5" />
+                <span id="confidenceValue">0.5</span>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <p>Powered by MediaPipe & FastAPI | Face Anti-Spoofing System</p>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
