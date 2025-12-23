@@ -1,5 +1,42 @@
 # ĐỒ ÁN: FACE ANTI-SPOOFING DỰA TRÊN SHUFFLED STYLE ASSEMBLY NETWORK (SSAN)
 
+--- 
+## Mục lục
+
+1. [Giới thiệu](#1-giới-thiệu)
+2. [Nghiên cứu liên quan](#2-nghiên-cứu-liên-quan)
+3. [Phương pháp đề xuất](#3-phương-pháp-đề-xuất)
+   - [Tổng quan kiến trúc mô hình](#31-tổng-quan-kiến-trúc-mô-hình)
+   - [Tách đặc trưng Content và Style](#32-tách-đặc-trưng-content-và-style)
+   - [Shuffled Style Assembly](#33-shuffled-style-assembly)
+   - [Học tương phản cho đặc trưng Style](#34-học-tương-phản-cho-đặc-trưng-style)
+   - [Học đối kháng cho đặc trưng Content](#35-học-đối-kháng-cho-đặc-trưng-content)
+   - [Hàm mất mát tổng](#36-hàm-mất-mát-tổng)
+   - [Tóm tắt phương pháp](#37-tóm-tắt-phương-pháp)
+4. [Mô tả bộ dữ liệu](#4-mô-tả-bộ-dữ-liệu)
+   - [Tổng quan bộ dữ liệu](#41-tổng-quan-bộ-dữ-liệu)
+   - [Cấu trúc thư mục dữ liệu](#42-cấu-trúc-thư-mục-dữ-liệu)
+   - [Nguồn dữ liệu và đặc điểm từng domain](#43-nguồn-dữ-liệu-và-đặc-điểm-từng-domain)
+   - [Định dạng dữ liệu và nhãn](#44-định-dạng-dữ-liệu-và-nhãn)
+   - [Tiền xử lý dữ liệu](#45-tiền-xử-lý-dữ-liệu)
+   - [Phân chia tập dữ liệu](#46-phân-chia-tập-dữ-liệu)
+   - [Ý nghĩa của bộ dữ liệu trong đồ án](#47-ý-nghĩa-của-bộ-dữ-liệu-trong-đồ-án)
+5. [Mô hình Baseline](#5-mô-hình-baseline)
+   - [Kiến trúc mô hình](#51-kiến-trúc-mô-hình)
+   - [Dữ liệu và tiền xử lý](#52-dữ-liệu-và-tiền-xử-lý)
+   - [Thiết lập huấn luyện](#53-thiết-lập-huấn-luyện)
+   - [Chỉ số đánh giá](#54-chỉ-số-đánh-giá)
+   - [Chiến lược huấn luyện và chọn mô hình](#55-chiến-lược-huấn-luyện-và-chọn-mô-hình)
+   - [Vai trò của mô hình Baseline](#56-vai-trò-của-mô-hình-baseline)
+   - [Kết quả](#57-kết-quả)
+6. [Kết quả thực nghiệm SSAN](#6-kết-quả-thực-nghiệm-ssan)
+   - [Chi tiết cài đặt](#61-chi-tiết-cài-đặt)
+   - [Kết quả thực nghiệm của mô hình chính](#62-kết-quả-thực-nghiệm-của-mô-hình-chính)
+7. [So sánh SSAN với mô hình baseline](#7-so-sánh-ssan-với-mô-hình-baseline)
+8. [Tham khảo](#8-tham-khảo)
+
+--- 
+
 ## 1. Giới thiệu
 
 Nhận dạng khuôn mặt là một trong những công nghệ thị giác máy tính được ứng dụng rộng rãi trong các hệ thống xác thực hiện đại như kiểm soát truy cập và thanh toán điện tử. Tuy nhiên, các hệ thống này vẫn dễ bị tấn công bởi các hình thức giả mạo trình diễn như ảnh in, video phát lại hoặc hiển thị trên màn hình, làm phát sinh nhu cầu cấp thiết đối với bài toán Face Anti-Spoofing (FAS).
@@ -213,17 +250,13 @@ Trong đó:
 
 ### 4.3. Nguồn dữ liệu và đặc điểm từng domain
 
-- MSU_MFSD:  
-  Bộ dữ liệu công khai, bao gồm các hình thức tấn công phổ biến như ảnh in và video replay, được thu thập trong điều kiện phòng thí nghiệm.
+- MSU_MFSD: Bộ dữ liệu công khai, bao gồm các hình thức tấn công phổ biến như ảnh in và video replay, được thu thập trong điều kiện phòng thí nghiệm.
 
-- SiW:  
-  Bộ dữ liệu công khai với nhiều loại tấn công và điều kiện thu thập khác nhau, thường được sử dụng trong các nghiên cứu Face Anti-Spoofing và Domain Generalization.
+- SiW: Bộ dữ liệu công khai với nhiều loại tấn công và điều kiện thu thập khác nhau, thường được sử dụng trong các nghiên cứu Face Anti-Spoofing và Domain Generalization.
 
-- WEBCAM:  
-  Bộ dữ liệu tự thu thập, trong đó các video spoof được quay bằng điện thoại và phát lại trước webcam máy tính xách tay. Domain này mô phỏng sát các kịch bản giả mạo trong môi trường thực tế.
+- WEBCAM: Bộ dữ liệu tự thu thập, trong đó các video spoof được quay bằng điện thoại và phát lại trước webcam máy tính xách tay. Domain này mô phỏng sát các kịch bản giả mạo trong môi trường thực tế.
 
-- CUSTOM, CUSTOM2, CUSTOM3:  
-  Các bộ dữ liệu tự xây dựng với sự khác biệt về thiết bị, điều kiện ánh sáng, độ phân giải và môi trường ghi hình, nhằm tăng độ đa dạng domain và kiểm tra khả năng tổng quát hóa của mô hình.
+- CUSTOM, CUSTOM2, CUSTOM3: Các bộ dữ liệu tự xây dựng với sự khác biệt về thiết bị, điều kiện ánh sáng, độ phân giải và môi trường ghi hình, nhằm tăng độ đa dạng domain và kiểm tra khả năng tổng quát hóa của mô hình.
 
 Việc kết hợp các domain tự thu thập và domain công khai giúp bộ dữ liệu bao phủ nhiều phân phối dữ liệu khác nhau, từ đó tạo điều kiện thuận lợi cho việc đánh giá các phương pháp Face Anti-Spoofing trong bối cảnh đa miền.
 
@@ -375,9 +408,48 @@ Mô hình baseline CNN phản ánh hiệu năng của một phương pháp Face 
 
 ---
 
+### 5.7. Kết quả
+
+<div align="center">
+  <img src="images/baseline_metrics.png" width="1000"/>
+  <p><em>Hình 3. Kết quả huấn luyện mô hình baseline.</em></p>
+</div>
+
+Mô hình baseline được xây dựng dựa trên kiến trúc CNN đơn giản và được sử dụng làm mốc so sánh cho mô hình chính. Kết quả huấn luyện và đánh giá của baseline được ghi lại trong file log, bao gồm các chỉ số hiệu năng quan trọng như Accuracy, AUC và HTER.
+
+#### Kết quả định lượng
+
+Bảng dưới đây tổng hợp kết quả tốt nhất của mô hình baseline trên tập validation, được lựa chọn dựa trên chỉ số AUC − HTER cao nhất.
+
+| Epoch | Accuracy (ACC) | AUC | HTER | FPR | FRR | AUC − HTER |
+|------:|---------------:|----:|-----:|----:|----:|-----------:|
+| 18 | 0.8574 | 0.9294 | 0.1426 | 0.1427 | 0.1425 | 0.7868 |
+
+*Kết quả được trích từ epoch có giá trị AUC − HTER cao nhất trong quá trình huấn luyện.*
+
+---
+
+#### Phân tích kết quả
+
+Từ kết quả trên có thể rút ra một số nhận xét như sau:
+
+- Mô hình baseline đạt Accuracy khoảng 85%, cho thấy mạng CNN đơn giản vẫn có khả năng học được các đặc trưng cơ bản để phân biệt giữa khuôn mặt thật và giả trong điều kiện dữ liệu đã biết.
+- Giá trị AUC đạt trên 0.92, phản ánh khả năng phân biệt tương đối tốt giữa hai lớp live và spoof khi xét trên tập validation.
+- Tuy nhiên, HTER vẫn ở mức khá cao (~14%), cho thấy mô hình còn mắc lỗi đáng kể khi cân bằng giữa False Positive Rate (FPR) và False Rejection Rate (FRR).
+- Hai chỉ số FPR và FRR xấp xỉ nhau, cho thấy mô hình baseline chưa có khả năng tối ưu tốt cho các kịch bản thực tế, nơi yêu cầu kiểm soát chặt chẽ từng loại lỗi.
+
+#### Nhận xét tổng quát
+
+Mặc dù đạt được kết quả tương đối tốt trong cùng miền dữ liệu, mô hình baseline vẫn bộc lộ hạn chế rõ rệt:
+- Không được thiết kế để xử lý sự thay đổi miền dữ liệu (domain shift)
+- Dễ bị ảnh hưởng bởi các yếu tố như ánh sáng, thiết bị và điều kiện thu thập khác nhau
+- Hiệu năng còn khoảng cách đáng kể so với mô hình đề xuất dựa trên SSAN
+
+Do đó, mô hình baseline đóng vai trò là mốc tham chiếu hợp lý, giúp làm nổi bật mức độ cải thiện của mô hình chính trong các kịch bản Face Anti-Spoofing đa miền.
+
 ## 6. Kết quả thực nghiệm SSAN
 
-### 6.1. Chi tiết cài đặt (Implementation Details)
+### 6.1. Chi tiết cài đặt
 
 Trong đồ án này, mô hình chính được xây dựng dựa trên kiến trúc SSAN-based, kế thừa ý tưởng từ bài báo *Shuffled Style Assembly Network (SSAN)* cho bài toán Face Anti-Spoofing trong điều kiện đa miền (multi-domain).
 
@@ -441,12 +513,49 @@ Mô hình SSAN-based đạt được kết quả tích cực trên tập validat
 - Accuracy ổn định trong suốt quá trình huấn luyện
 - Quá trình huấn luyện hội tụ mượt, không xảy ra overfitting rõ rệt nhờ early stopping
 
-*Tại đây có thể chèn:*
-- Biểu đồ training/validation loss
-- Biểu đồ AUC và HTER theo epoch
-- Bảng kết quả tại epoch tốt nhất
+<div align="center">
+  <img src="images/ssan_metrics.png" width="1000"/>
+  <p><em>Hình 4. Kết quả huấn luyện mô hình SSAN.</em></p>
+</div>
+
+Mô hình chính trong đồ án được xây dựng dựa trên kiến trúc Shuffled Style Assembly Network (SSAN) nhằm giải quyết bài toán Face Anti-Spoofing trong điều kiện đa miền. Kết quả huấn luyện và đánh giá của mô hình được ghi lại chi tiết trong file log, bao gồm các thành phần loss và các chỉ số đánh giá chuẩn trong Face Anti-Spoofing.
+
+Bảng dưới đây trình bày kết quả tốt nhất của mô hình SSAN-based trên tập validation, được lựa chọn dựa trên giá trị AUC − HTER cao nhất trong quá trình huấn luyện.
+
+| Epoch  | Accuracy (ACC)  | AUC    | HTER   | FPR    | FRR    | AUC − HTER |
+| ------ | --------------- | ------ | ------ | ------ | ------ | ---------- |
+| 32     | 0.9940          | 0.9996 | 0.0061 | 0.0061 | 0.0061 | 0.9934     |
+
+*Kết quả được trích từ epoch có chỉ số AUC − HTER cao nhất trong quá trình huấn luyện.*
 
 ---
+
+#### Phân tích kết quả
+
+Từ bảng kết quả trên, có thể rút ra một số nhận xét quan trọng như sau:
+
+- Mô hình SSAN-based đạt Accuracy trên 99%, cho thấy khả năng phân biệt live/spoof rất cao ngay cả trong bối cảnh dữ liệu đa miền.
+- Giá trị AUC xấp xỉ 0.999, phản ánh năng lực phân tách hai lớp gần như hoàn hảo trên tập validation.
+- HTER rất thấp (~0.6%), cho thấy mô hình cân bằng tốt giữa hai loại lỗi False Positive Rate (FPR) và False Rejection Rate (FRR).
+- Hai chỉ số FPR và FRR gần như tương đương, chứng tỏ mô hình hoạt động ổn định và không thiên lệch về một phía lỗi cụ thể.
+
+Ngoài ra, quá trình huấn luyện cho thấy:
+- Thành phần loss phân loại (CE) giảm nhanh và ổn định
+- Contrastive loss giúp làm nổi bật các đặc trưng style liên quan đến liveness
+- Adversarial loss góp phần loại bỏ thông tin phụ thuộc miền trong đặc trưng content
+- Chỉ số AUC − HTER tăng đều và hội tụ sớm, cho phép kích hoạt cơ chế early stopping hiệu quả
+
+---
+
+#### Nhận xét tổng quát
+
+Kết quả thực nghiệm cho thấy mô hình SSAN-based vượt trội so với các phương pháp CNN truyền thống trong bài toán Face Anti-Spoofing đa miền:
+- Khả năng tổng quát hóa tốt sang các domain khác nhau
+- Hiệu năng ổn định trong các kịch bản dữ liệu thực tế
+- Giảm đáng kể tỷ lệ lỗi so với mô hình baseline
+
+Những kết quả này khẳng định hiệu quả của việc kết hợp Shuffled Style Assembly, Contrastive Learning và Adversarial Learning trong việc học các đặc trưng liveness bền vững và ít phụ thuộc miền.
+
 
 #### Đánh giá định tính
 Ngoài đánh giá offline, mô hình còn được kiểm thử trong kịch bản thời gian thực (real-time) với webcam:
@@ -459,10 +568,50 @@ Ngoài đánh giá offline, mô hình còn được kiểm thử trong kịch b�
 
 ## 7. So sánh SSAN với mô hình baseline
 
-So với mô hình CNN baseline:
-- Mô hình SSAN-based đạt AUC cao hơn đáng kể
-- HTER giảm rõ rệt, đặc biệt trong các kịch bản khác miền
-- Ít bị ảnh hưởng bởi domain shift
-- Quá trình huấn luyện ổn định và hội tụ tốt hơn
+<div align="center">
+  <img src="images/compare.png" width="1000"/>
+  <p><em>Hình 5. So sánh SSAN với baseline.</em></p>
+</div>
 
-Những kết quả này cho thấy việc kết hợp Shuffled Style Assembly, Contrastive Learning và Adversarial Learning giúp cải thiện đáng kể khả năng tổng quát hóa của mô hình Face Anti-Spoofing trong môi trường thực tế.
+Để đánh giá hiệu quả của phương pháp đề xuất, kết quả tốt nhất của mô hình SSAN-based được so sánh trực tiếp với mô hình CNN baseline tại các epoch có giá trị AUC − HTER cao nhất.
+
+### So sánh định lượng
+
+Bảng dưới đây tổng hợp kết quả tốt nhất của hai mô hình trên tập validation.
+
+| Mô hình        | Epoch | Accuracy (ACC) | AUC    | HTER   | FPR    | FRR    | AUC − HTER |
+|--------------- | ----: | -------------: | -----: | -----: | -----: | -----: | ---------: |
+| Baseline (CNN) | 18    | 0.8574         | 0.9294 | 0.1426 | 0.1427 | 0.1425 | 0.7868     |
+| SSAN-based     | 32    | 0.9940         | 0.9996 | 0.0061 | 0.0061 | 0.0061 | 0.9934     |
+
+---
+
+### Phân tích so sánh
+
+Từ bảng so sánh trên có thể rút ra các nhận xét quan trọng như sau:
+
+- Mô hình SSAN-based vượt trội hoàn toàn so với baseline trên tất cả các chỉ số đánh giá.
+- Accuracy của SSAN-based cao hơn khoảng 13.7%, cho thấy khả năng phân loại live/spoof chính xác hơn đáng kể.
+- Giá trị AUC gần đạt 1.0, phản ánh khả năng phân biệt hai lớp gần như hoàn hảo.
+- HTER giảm mạnh từ khoảng 14.3% xuống chỉ còn 0.6%, cho thấy mô hình SSAN-based kiểm soát tốt cả hai loại lỗi FPR và FRR.
+- Chỉ số AUC − HTER của SSAN-based cao hơn baseline khoảng 0.21, chứng minh sự cải thiện rõ rệt về hiệu năng tổng thể.
+
+Sự cải thiện này đến từ việc mô hình SSAN-based khai thác hiệu quả các đặc trưng style liên quan đến liveness thông qua cơ chế Shuffled Style Assembly, kết hợp với Contrastive Learning và Adversarial Learning nhằm giảm thiểu ảnh hưởng của sự thay đổi miền dữ liệu.
+
+---
+
+### Nhận xét tổng quát
+
+Kết quả so sánh cho thấy mô hình CNN baseline chỉ phù hợp cho các kịch bản cùng miền dữ liệu, trong khi mô hình SSAN-based có khả năng tổng quát hóa vượt trội trong các kịch bản Face Anti-Spoofing đa miền và gần với môi trường thực tế. Điều này khẳng định tính hiệu quả và tính ứng dụng cao của phương pháp đề xuất trong đồ án.
+
+## 8. Tham khảo
+
+[1] Y. Liu, Z. Wang, Y. Zhao, et al., Shuffled Style Assembly for Domain Generalized Face Anti-Spoofing,  
+*arXiv preprint*, 2022.  
+https://arxiv.org/pdf/2203.05340
+
+---
+
+**Sinh viên thực hiện:** Mai Khoa Bách, Nguyễn Minh Đức, Đồng Văn Hảo
+**Giảng viên hướng dẫn:** Thầy Nguyễn Đình Quý  
+
